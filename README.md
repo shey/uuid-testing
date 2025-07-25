@@ -1,24 +1,13 @@
-# README
+```sql
+uuid_app_development=# select count(*) from uuid_v7_records;
+  count
+----------
+ 10500000
+(1 row)
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+uuid_app_development=# select count(*) from uuid_v4_records;
+  count
+----------
+ 10500000
+(1 row)
+```
