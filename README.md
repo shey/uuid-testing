@@ -45,3 +45,9 @@ LIMIT 100;
  Execution Time: 0.143 ms
 (4 rows)
 ```
+
+
+### Find Performance
+```
+bin/rails runner find_bm.rb
+```
