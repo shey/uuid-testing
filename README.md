@@ -1,58 +1,33 @@
+### SELECT * ORDER BY ID QUERY EXPLAINS
+1. v4: 1.233
+1. v7: 0.692
+1.  M: 0.787
 
-### Records Count
-```sql
-uuid_app_development=# select count(*) from uuid_v7_records;
-  count
-----------
- 10500000
-(1 row)
-
-uuid_app_development=# select count(*) from uuid_v4_records;
-  count
-----------
- 10500000
-(1 row)
 ```
-
-### SELECT * | V7 vs. V4
-Consistent lower upper-end costs for UUIDv7 compared to UUIDv4, 4.93 vs. 7.68
-
-```sql
-uuid_app_development=# -- UUIDv4
-EXPLAIN ANALYZE
-SELECT * FROM uuid_v4_records
-ORDER BY id
-LIMIT 100;
-
--- UUIDv7
-EXPLAIN ANALYZE
-SELECT * FROM uuid_v7_records
-ORDER BY id
-LIMIT 100;
+uuid_app_development=# explain analyze select * from uuid_v4_records order by id limit 100;
                                                                         QUERY PLAN
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
- Limit  (cost=0.43..7.68 rows=100 width=46) (actual time=0.029..0.245 rows=100 loops=1)
-   ->  Index Scan using uuid_v4_records_pkey on uuid_v4_records  (cost=0.43..760595.86 rows=10500000 width=46) (actual time=0.027..0.231 rows=100 loops=1)
- Planning Time: 0.123 ms
- Execution Time: 0.277 ms
+ Limit  (cost=0.43..7.21 rows=100 width=46) (actual time=0.852..1.192 rows=100 loops=1)
+   ->  Index Scan using uuid_v4_records_pkey on uuid_v4_records  (cost=0.43..711738.76 rows=10499961 width=46) (actual time=0.849..1.177 rows=100 loops=1)
+ Planning Time: 0.596 ms
+ Execution Time: 1.233 ms
 (4 rows)
 
+uuid_app_development=# explain analyze select * from uuid_v7_records order by id limit 100;
                                                                         QUERY PLAN
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
- Limit  (cost=0.43..4.93 rows=100 width=46) (actual time=0.026..0.121 rows=100 loops=1)
-   ->  Index Scan using uuid_v7_records_pkey on uuid_v7_records  (cost=0.43..471857.85 rows=10499961 width=46) (actual time=0.025..0.108 rows=100 loops=1)
- Planning Time: 0.079 ms
- Execution Time: 0.143 ms
+ Limit  (cost=0.43..4.41 rows=100 width=46) (actual time=0.620..0.669 rows=100 loops=1)
+   ->  Index Scan using uuid_v7_records_pkey on uuid_v7_records  (cost=0.43..417357.85 rows=10499961 width=46) (actual time=0.618..0.660 rows=100 loops=1)
+ Planning Time: 1.529 ms
+ Execution Time: 0.692 ms
+(4 rows)
+
+uuid_app_development=# explain analyze select * from mixed_uuid_records order by id limit 100;
+                                                                           QUERY PLAN
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=0.43..7.55 rows=100 width=49) (actual time=0.046..0.765 rows=100 loops=1)
+   ->  Index Scan using mixed_uuid_records_pkey on mixed_uuid_records  (cost=0.43..746973.76 rows=10499854 width=49) (actual time=0.044..0.755 rows=100 loops=1)
+ Planning Time: 0.417 ms
+ Execution Time: 0.787 ms
 (4 rows)
 ```
-
-
-### Find Performance
-```
-bin/rails runner find_bm.rb
-```
-| Operation                         | User Time (s) | System Time (s) | Total Time (s) | Real Time (s) |
-|----------------------------------|---------------|------------------|----------------|----------------|
-| UuidV7Record.first (3000x)       | 0.615743      | 0.012610         | 0.628353       | 0.628940       |
-| UuidV4Record.first (3000x)       | 0.620695      | 0.010211         | 0.630906       | 0.646641       |
-| MixedUuidRecord.first (3000x)    | 0.621853      | 0.009788         | 0.631641       | 0.631663       |
