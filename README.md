@@ -51,3 +51,8 @@ LIMIT 100;
 ```
 bin/rails runner find_bm.rb
 ```
+| Operation                         | User Time (s) | System Time (s) | Total Time (s) | Real Time (s) |
+|----------------------------------|---------------|------------------|----------------|----------------|
+| UuidV7Record.first (3000x)       | 0.615743      | 0.012610         | 0.628353       | 0.628940       |
+| UuidV4Record.first (3000x)       | 0.620695      | 0.010211         | 0.630906       | 0.646641       |
+| MixedUuidRecord.first (3000x)    | 0.621853      | 0.009788         | 0.631641       | 0.631663       |
